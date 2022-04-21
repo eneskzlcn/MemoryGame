@@ -8,10 +8,12 @@
 import SwiftUI
 
 @main
-struct TodoApp: App {
+struct MemoryApp: App {
+    let game = EmojiMemoryGame()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(game)
         }
+    
     }
 }
