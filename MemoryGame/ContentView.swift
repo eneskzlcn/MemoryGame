@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    let viewModel : EmojiMemoryGame
+    @ObservedObject var viewModel : EmojiMemoryGame
     var body: some View {
         VStack {
             ScrollView{
@@ -9,36 +9,13 @@ struct ContentView: View {
                     ForEach(viewModel.cards) { card in
                         CardView(card: card)
                             .aspectRatio(2/3, contentMode: .fit)
+                            .onTapGesture {
+                                viewModel.choose(card)
+                            }
                     }
                 }.padding()
-            }
-            Spacer()
-            HStack {
-                removeBTN
-                Spacer()
-                addBTN
             }.padding()
         }
-    }
-    
-    var removeBTN: some View {
-        Button(action: {
-            if emojiCount > 0{
-                emojiCount-=1
-            }
-        }, label: {
-            Text("Remove")
-        })
-    }
-    
-    var addBTN: some View {
-        Button(action: {
-            if emojiCount < emojis.count {
-                emojiCount+=1
-            }
-        }, label: {
-            Text("Add")
-        })
     }
 }
 
@@ -51,12 +28,12 @@ struct CardView : View {
                 shape.fill().foregroundColor(.white)
                 shape.strokeBorder(lineWidth: 2)
                 Text(card.content).font(.largeTitle)
-            } else {
+            }else if card.isMatched{
+                shape.opacity(0)
+            }
+            else {
                 shape.fill()
             }
-        }
-        .onTapGesture {
-            card.isFaceUp = !card.isFaceUp
         }
     }
 }
@@ -110,17 +87,17 @@ struct CardView : View {
 
 
 struct ContentView_Previews: PreviewProvider {
-    let game = EmojiMemoryGame()
+    static let game = EmojiMemoryGame()
     static var previews: some View {
-        ContentView(game)
+        ContentView(viewModel:game)
             .preferredColorScheme(.light)
             .previewDevice("iPhone 12 mini")
 .previewInterfaceOrientation(.portrait)
-        ContentView(game)
+        ContentView(viewModel: game)
             .preferredColorScheme(.light)
             .previewDevice("iPhone 12 mini")
 .previewInterfaceOrientation(.landscapeLeft)
-        ContentView(game)
+        ContentView(viewModel: game)
             .preferredColorScheme(.dark)
             .previewDevice("iPhone 12 mini")
     }
